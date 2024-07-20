@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Axios from "axios";
 
@@ -23,6 +23,7 @@ const LoginRegister = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [type, toggle] = useToggle(["login", "register"]);
+  const [loggedIn,setLoggedIn] = useState(false)
 
   const navigate = useNavigate();
 
@@ -68,11 +69,26 @@ const LoginRegister = () => {
       const token = user.data.token;
       localStorage.setItem("jwtToken", token);
       Axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      navigate("/dashboard");
+      console.log(Axios.defaults.headers.common["Authorization"]);
+      navigate("/home");
     } catch (err) {
       setError(err.response.data.msg);
     }
   };
+
+  // if there is token, set it in axios header and redirect to home page
+  useEffect(()=>{
+    const token = localStorage.getItem("jwtToken");
+    if(token){
+      setLoggedIn(true);
+      // Axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      // child elements are rendered first, so on refresh token wont be set for requests from home component,hence no use
+    }
+  },)
+  
+  if(loggedIn){
+    return navigate("/home");
+  }
 
   return (
     <Container size={420} my={40}>

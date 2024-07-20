@@ -1,0 +1,32 @@
+.jobs-wrapper{
+    width: 100%;
+    background-color: #f2f4f8;
+    padding-top: 100px;
+    padding-bottom: 100px;
+}
+.job-card{
+    padding: 50px;
+    width: 60%;
+    margin: 0 auto;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+}
+.job-card:hover{
+    box-shadow: 0px 20px 25px -5px rgba(0,0,0,0.1);
+}
+.action{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.action button{
+    border: none;
+    background-color: inherit;
+}
+.action button:hover{
+    cursor: pointer;
+}
