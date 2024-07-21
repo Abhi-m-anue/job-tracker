@@ -39,9 +39,6 @@ const LoginRegister = () => {
           }
         );
         setError("");
-        const token = user.data.token;
-        localStorage.setItem("jwtToken", token);
-        Axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
         toggle();
     }
     catch(err){
@@ -69,7 +66,6 @@ const LoginRegister = () => {
       const token = user.data.token;
       localStorage.setItem("jwtToken", token);
       Axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      console.log(Axios.defaults.headers.common["Authorization"]);
       navigate("/home");
     } catch (err) {
       setError(err.response.data.msg);

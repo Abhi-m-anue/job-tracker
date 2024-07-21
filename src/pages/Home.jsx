@@ -46,20 +46,22 @@ const Home = () => {
   };
 
   const handleDelete = async (id) => {
-    // try {
-    //   const token = localStorage.getItem("jwtToken");
-    //   if (token) {
-    //     const response = await Axios.delete(
-    //       `https://jobs-api-0v7l.onrender.com/api/v1/jobs/${selectedJob._id}`,
-    //       {
-    //         headers: { Authorization: `Bearer ${token}` },
-    //       }
-    //     );
-    //     if (response.status === 200) {
-            
-    //     }
-    //   } 
-    // } catch (err) {}
+    try {
+      const token = localStorage.getItem("jwtToken");
+      if (token) {
+        const response = await Axios.delete(
+          `https://jobs-api-0v7l.onrender.com/api/v1/jobs/${id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+       if(response.status === 200){
+        fetchdata();
+       }
+      } 
+    } catch (err) {
+      //redirect to session expired
+    }
   };
 
   const handleChange = (e) => {
@@ -117,7 +119,7 @@ const Home = () => {
             position: "",
             status: "",
           });
-            // fetchdata();
+          fetchdata();
           setUpdateSuccess(true);
           setTimeout(() => {
             setUpdateSuccess(false);
@@ -172,7 +174,7 @@ const Home = () => {
             position: "",
             status: "",
           });
-            // fetchdata();
+          fetchdata();
           setUpdateSuccess(true);
           setTimeout(() => {
             setUpdateSuccess(false);
@@ -185,26 +187,26 @@ const Home = () => {
       }
     } catch (err) {}
   };
+  const fetchdata = async()=> {
+    try {
+      const token = localStorage.getItem("jwtToken");
+      if (token) {
+        const response = await Axios.get(
+          "https://jobs-api-0v7l.onrender.com/api/v1/jobs",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        setJobs(response.data.jobs);
+      } else {
+        //redirect to session expired please login again page
+      }
+    } catch (err) {
+      //redirect to session expired
+    }
+  }
 
   useEffect(() => {
-    async function fetchdata() {
-      try {
-        const token = localStorage.getItem("jwtToken");
-        if (token) {
-          const response = await Axios.get(
-            "https://jobs-api-0v7l.onrender.com/api/v1/jobs",
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
-          setJobs(response.data.jobs);
-        } else {
-          //redirect to session expired please login again page
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    }
     fetchdata();
   }, []);
   return (
@@ -232,9 +234,9 @@ const Home = () => {
         </div>
       </div>
       <div className="jobs-wrapper">
-        {jobs.map((job, key) => {
+        {jobs.length>0 && jobs.map((job, key) => {
           return (
-            <div className="job-card">
+            <div key={key} className="job-card">
               <div className="content">
                 <p>
                   Company :{" "}
@@ -318,7 +320,7 @@ const Home = () => {
         onClose={() => {
           setOpenedCreate(false);
         }}
-        title="Edit Job"
+        title="Create new job"
         radius="md"
         centered
       >

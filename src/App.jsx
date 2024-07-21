@@ -7,16 +7,7 @@ import Home from "./pages/Home";
 import "@mantine/core/styles.css";
 import { MantineProvider } from "@mantine/core";
 
-import Axios from "axios"
-
 function App() {
-
-  // useEffect(()=>{
-  //   const token = localStorage.getItem('jwtToken');
-  //   if(token){
-  //     Axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-  //   }
-  // },[])
 
   return (
     <MantineProvider>

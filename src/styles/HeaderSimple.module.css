@@ -31,3 +31,6 @@
     color: var(--mantine-color-white);
   }
 }
+.link:hover{
+  cursor: pointer;
+}
