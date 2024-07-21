@@ -310,7 +310,7 @@ const Home = () => {
             onClick={handleSubmit}
             color={updateSuccess ? "teal" : "blue"}
           >
-            {updateSuccess ? "Task updated" : "Confirm"}
+            {updateSuccess ? "Job updated" : "Confirm"}
           </Button>
         </form>
       </Modal>
@@ -359,7 +359,7 @@ const Home = () => {
             onClick={handleSubmitCreate}
             color={updateSuccess ? "teal" : "blue"}
           >
-            {updateSuccess ? "Task created" : "Confirm"}
+            {updateSuccess ? "Job created" : "Confirm"}
           </Button>
         </form>
       </Modal>
