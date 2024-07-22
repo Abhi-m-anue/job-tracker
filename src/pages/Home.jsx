@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom"
 import Header from "../components/Header";
 import "../styles/Home.css";
 import Axios from "axios";
+
 import { FaEdit, FaChevronDown } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { IoAddSharp } from "react-icons/io5";
+
 import { useDisclosure } from "@mantine/hooks";
-import { Modal, Input, TextInput, Button, Text } from "@mantine/core";
+import { Modal, Input, TextInput, Button, Text, LoadingOverlay, Box} from "@mantine/core";
 
 const Home = () => {
   const [jobs, setJobs] = useState([{}]); // store all jobs received from back-end
@@ -26,7 +29,9 @@ const Home = () => {
   const [createErrorCompany,setCreateErrorCompany] = useState("");
   const [createErrorPosition, setCreateErrorPosition] = useState("");
 
+  const [loading, setLoading] = useState(false); 
 
+  const navigate = useNavigate();
 
   const handleEdit = (id) => {
     setFormData({
@@ -119,11 +124,11 @@ const Home = () => {
             position: "",
             status: "",
           });
-          fetchdata();
           setUpdateSuccess(true);
           setTimeout(() => {
             setUpdateSuccess(false);
             setOpenedCreate(false);
+            fetchdata();
           }, 1000);
         }
       } else {
@@ -174,12 +179,13 @@ const Home = () => {
             position: "",
             status: "",
           });
-          fetchdata();
+          
           setUpdateSuccess(true);
           setTimeout(() => {
             setUpdateSuccess(false);
             close();
-          }, 1000);
+            fetchdata();
+          }, 500);
         }
       } else {
         console.log(err);
@@ -188,6 +194,7 @@ const Home = () => {
     } catch (err) {}
   };
   const fetchdata = async()=> {
+    setLoading(true);
     try {
       const token = localStorage.getItem("jwtToken");
       if (token) {
@@ -199,10 +206,14 @@ const Home = () => {
         );
         setJobs(response.data.jobs);
       } else {
+        navigate("/unauthorised")
         //redirect to session expired please login again page
       }
     } catch (err) {
-      //redirect to session expired
+      console.log(err)
+    }
+    finally{
+      setLoading(false);
     }
   }
 
@@ -212,63 +223,71 @@ const Home = () => {
   return (
     <div>
       <Header />
-      <div className="create-new">
-        <Text variant="gradient" fw={900} size="lg">
-          Create new job
-        </Text>
-        <div
-          onClick={() => {
-            setFormData({
-              // clear the formData from previous use
-              company: "",
-              position: "",
-              status: "",
-            });
-            setCreateErrorCompany("");
-            setCreateErrorPosition("");
-            setOpenedCreate(true);
-          }}
-          style={{ display: "flex", alignItems: "center" }}
-        >
-          <IoAddSharp fontSize={20} color="grey" />
+      <Box pos="relative">
+        <LoadingOverlay
+          visible={loading}
+          zIndex={1000}
+          overlayProps={{ radius: "sm", blur: 1 }}
+        />
+        <div className="create-new">
+          <Text variant="gradient" fw={900} size="lg">
+            Create new job
+          </Text>
+          <div
+            onClick={() => {
+              setFormData({
+                // clear the formData from previous use
+                company: "",
+                position: "",
+                status: "",
+              });
+              setCreateErrorCompany("");
+              setCreateErrorPosition("");
+              setOpenedCreate(true);
+            }}
+            style={{ display: "flex", alignItems: "center" }}
+          >
+            <IoAddSharp fontSize={20} color="grey" />
+          </div>
         </div>
-      </div>
-      <div className="jobs-wrapper">
-        {jobs.length>0 && jobs.map((job, key) => {
-          return (
-            <div key={key} className="job-card">
-              <div className="content">
-                <p>
-                  Company :{" "}
-                  <b style={{ color: "var(--mantine-color-blue-filled)" }}>
-                    {job.company}
-                  </b>
-                </p>
-                <p>
-                  Position :{" "}
-                  <b style={{ color: "var(--mantine-color-blue-filled)" }}>
-                    {job.position}
-                  </b>
-                </p>
-                <p>
-                  Status :{" "}
-                  <b style={{ color: "var(--mantine-color-blue-filled)" }}>
-                    {job.status}
-                  </b>
-                </p>
-              </div>
-              <div className="action">
-                <button onClick={() => handleEdit(job._id)}>
-                  <FaEdit />
-                </button>
-                <button onClick={() => handleDelete(job._id)}>
-                  <MdDelete color="darkRed" />
-                </button>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+        <div className="jobs-wrapper">
+          {jobs.length > 0 &&
+            jobs.map((job, key) => {
+              return (
+                <div key={key} className="job-card">
+                  <div className="content">
+                    <p>
+                      Company :{" "}
+                      <b style={{ color: "var(--mantine-color-blue-filled)" }}>
+                        {job.company}
+                      </b>
+                    </p>
+                    <p>
+                      Position :{" "}
+                      <b style={{ color: "var(--mantine-color-blue-filled)" }}>
+                        {job.position}
+                      </b>
+                    </p>
+                    <p>
+                      Status :{" "}
+                      <b style={{ color: "var(--mantine-color-blue-filled)" }}>
+                        {job.status}
+                      </b>
+                    </p>
+                  </div>
+                  <div className="action">
+                    <button onClick={() => handleEdit(job._id)}>
+                      <FaEdit />
+                    </button>
+                    <button onClick={() => handleDelete(job._id)}>
+                      <MdDelete color="darkRed" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+        </div>
+      </Box>
       <Modal
         opened={opened}
         onClose={close}
